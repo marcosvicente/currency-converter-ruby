@@ -7,4 +7,10 @@ Rails.application.routes.draw do
 
   # Defines the root path route ("/")
   # root "posts#index"
+  namespace :api do
+    resources :transactions,only: %i[index create]
+    get 'transactions/:user_id' => 'transactions#show'
+    put 'transactions/:user_id' => 'transactions#update'
+    delete 'transactions/:user_id' => 'transactions#destroy'
+  end
 end
