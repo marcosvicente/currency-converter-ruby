@@ -15,7 +15,12 @@ class Api::TransactionsController < ApplicationController
 
   # GET /transactions/{user_id}
   def show
-    render json: @transaction, status: :ok
+    transaction = CrudManagment::ShowService.new(
+      Transaction,
+      get_user_id_params
+    ).render_json
+
+    render json: transaction[:data], status: transaction[:status_code]
   end
 
   # POST /transactions
@@ -45,6 +50,9 @@ class Api::TransactionsController < ApplicationController
   end
 
   private
+  def get_user_id_params
+    { user_id: params[:user_id] }
+  end
   def set_transaction
     @transaction = Transaction.find(params[:user_id])
   end

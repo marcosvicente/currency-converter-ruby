@@ -11,7 +11,7 @@ module CrudManagment
     def render_json
       call
       if @klass.nil?
-        { data: "Not have date in #{klass}", status: :unprocessable_entity}
+        { data: "Not have data in #{klass}", status: :unprocessable_entity}
       else
         { data: @klass, status_code: status_code }
       end

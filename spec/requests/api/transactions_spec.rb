@@ -40,7 +40,6 @@ RSpec.describe "Api::Transactions", type: :request do
         get "/api/transactions/#{transactions[3].user_id}"
 
         expect(response).to have_http_status(:success)
-
         expect(response_body["from_currency"]).to eq(transactions[3].from_currency)
         expect(response_body["from_value"]).to eq(transactions[3].from_value)
         expect(response_body["rate"]).to eq(transactions[3].rate)
