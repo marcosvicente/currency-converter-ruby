@@ -9,7 +9,6 @@ RSpec.describe "Api::Transactions", type: :request do
         get "/api/transactions/"
 
         expect(response).to have_http_status(:success)
-
         expect(response_body).to be_an_instance_of(Array)
 
         transactions.each_with_index do |transaction, index|

@@ -3,9 +3,14 @@ class Api::TransactionsController < ApplicationController
 
   # GET /transactions
   def index
-    @transactions = Transaction.order(:created_at).page(paginate_params[:page]).per(paginate_params[:per_page])
-    
-    render json: @transactions, status: :ok
+    transactions = CrudManagment::IndexService.new(
+      Transaction,
+      nil,
+      paginate_params,
+      "created_at"
+    ).render_json
+
+    render json: transactions[:data], status: transactions[:status_code]
   end
 
   # GET /transactions/{user_id}
