@@ -42,10 +42,16 @@ group :development, :test do
   gem 'factory_bot_rails'
   gem 'faker'
   gem 'pry-rails', :group => :development
-  gem 'rspec-rails', '~> 4.0.0'
+  gem 'rspec-rails', '~> 8.0.1'
   gem 'shoulda-matchers', '~> 4.0'
-  gem 'simplecov', require: false
+  gem 'database_cleaner'
   gem 'timecop'
 end
 
+group :development do
+  gem 'annotate', git: 'https://github.com/ctran/annotate_models.git'
+end
 
+group :test do
+  gem 'simplecov', require: false
+end
