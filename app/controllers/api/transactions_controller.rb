@@ -35,6 +35,12 @@ class Api::TransactionsController < ApplicationController
 
   # PUT /transactions/{user_id}
   def update
+    transaction = CrudManagment::UpdateService.new(
+      Transaction,
+      transaction_params,
+      get_user_id_params
+    ).render_json
+
     if @transaction.update(transaction_params)
         render json: @transaction, status: :created
     else
@@ -52,6 +58,7 @@ class Api::TransactionsController < ApplicationController
   def get_user_id_params
     { user_id: params[:user_id] }
   end
+
   def set_transaction
     @transaction = Transaction.find(params[:user_id])
   end

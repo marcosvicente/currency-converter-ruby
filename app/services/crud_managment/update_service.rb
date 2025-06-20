@@ -1,16 +1,17 @@
 # frozen_string_literal: true
 
 module CrudManagment
-  class CreateService < CrudManagment::BaseService
+  class UpdateService < CrudManagment::BaseService
     attr_accessor :klass, :params
-    def initialize(klass, params)
+    def initialize(klass, params, item_params)
       @klass = super(klass)
       @params = params
-      @status_code = nil
+      @item_params = item_params
+      @status_cod = nil
     end
 
     def call
-      create
+      update
       klass
     end
 
@@ -23,9 +24,9 @@ module CrudManagment
       @status_code
     end
 
-    def create
+    def update
       instance_klass = load_object
-      if instance_klass.save
+      if instance_klass.update(@params)
         @status_code = 201
         instance_klass
       else
@@ -37,7 +38,7 @@ module CrudManagment
     private
 
     def load_object
-      @klass = @klass.new(params)
+      @klass = klass.find_by(@item_params)
     end
   end
 end
