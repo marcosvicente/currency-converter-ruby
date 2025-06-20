@@ -23,7 +23,7 @@ class Api::TransactionsController < ApplicationController
 
   # POST /transactions
   def create
-    transaction = CrudManagment::CreateService.new(
+    transaction = TransactionManagment::CreateService.new(
       Transaction,
       transaction_params
     ).render_json

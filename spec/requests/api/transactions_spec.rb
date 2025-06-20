@@ -62,7 +62,26 @@ RSpec.describe "Api::Transactions", type: :request do
     end
 
     context "with valid parameters" do
+      let(:value){ 3.67306 }
+
+      let(:currency_api_response) do
+        {
+          "meta": {
+            "last_updated_at": "2023-06-23T10:15:59Z"
+          },
+          "data": {
+            "AED": {
+              "code": "EUR",
+              "value": value
+            }
+          }
+        }
+      end
+
       it "creates a new transaction" do
+        allow(HTTParty).to receive(:get).and_return(currency_api_response)
+        allow_any_instance_of(TransactionManagment::CreateService).to receive(:get_values_from_currency).and_return(value)
+
         expect {
           post "/api/transactions/",
                params: { transaction: valid_attributes }, as: :json
@@ -70,27 +89,53 @@ RSpec.describe "Api::Transactions", type: :request do
       end
 
       it "renders a JSON response with the new transaction" do
+        allow(HTTParty).to receive(:get).and_return(currency_api_response)
+        allow_any_instance_of(TransactionManagment::CreateService).to receive(:get_values_from_currency).and_return(value)
+
         post "/api/transactions/",
              params: { transaction: valid_attributes }, as: :json
+
         expect(response).to have_http_status(:created)
         expect(response.content_type).to match(a_string_including("application/json"))
       end
 
       it "validate correct values" do
+        allow(HTTParty).to receive(:get).and_return(currency_api_response)
+        allow_any_instance_of(TransactionManagment::CreateService).to receive(:get_values_from_currency).and_return(value)
+
         post "/api/transactions/",
           params: { transaction: valid_attributes }, as: :json
 
         expect(response_body["from_currency"]).to eq(valid_attributes[:from_currency])
         expect(response_body["from_value"]).to eq(valid_attributes[:from_value])
-        expect(response_body["rate"]).to eq(valid_attributes[:rate])
+        expect(response_body["rate"]).to eq(value / valid_attributes[:from_value])
         expect(response_body["to_currency"]).to eq(valid_attributes[:to_currency])
-        expect(response_body["to_value"]).to eq(valid_attributes[:to_value])
+        expect(response_body["to_value"]).to eq(value)
         expect(response_body["user_id"]).to eq(valid_attributes[:user_id])
       end
     end
 
     context "with invalid parameters" do
+      let(:value){ 3.67306 }
+
+      let(:currency_api_response) do
+        {
+          "meta": {
+            "last_updated_at": "2023-06-23T10:15:59Z"
+          },
+          "data": {
+            "AED": {
+              "code": "EUR",
+              "value": value
+            }
+          }
+        }
+      end
+
       it "does not create a new transaction" do
+        allow(HTTParty).to receive(:get).and_return(currency_api_response)
+        allow_any_instance_of(TransactionManagment::CreateService).to receive(:get_values_from_currency).and_return(value)
+
         expect {
           post "/api/transactions/",
                params: { transaction: invalid_attributes }, as: :json
@@ -98,6 +143,9 @@ RSpec.describe "Api::Transactions", type: :request do
       end
 
       it "renders a JSON response with errors for the new test" do
+        allow(HTTParty).to receive(:get).and_return(currency_api_response)
+        allow_any_instance_of(TransactionManagment::CreateService).to receive(:get_values_from_currency).and_return(value)
+
         post "/api/transactions/",
              params: { transaction: invalid_attributes }, as: :json
         expect(response).to have_http_status(:unprocessable_entity)
