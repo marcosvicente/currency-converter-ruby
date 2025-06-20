@@ -79,7 +79,7 @@ RSpec.describe "Api::Transactions", type: :request do
       it "validate correct values" do
         post "/api/transactions/",
           params: { transaction: valid_attributes }, as: :json
-        
+
         expect(response_body["from_currency"]).to eq(valid_attributes[:from_currency])
         expect(response_body["from_value"]).to eq(valid_attributes[:from_value])
         expect(response_body["rate"]).to eq(valid_attributes[:rate])

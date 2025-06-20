@@ -25,13 +25,12 @@ class Api::TransactionsController < ApplicationController
 
   # POST /transactions
   def create
-    @transaction = Transaction.new(transaction_params)
-    if @transaction.save
-      render json: @transaction, status: :created
-    else
-      render json: { errors: @transaction.errors.full_messages },
-             status: :unprocessable_entity
-    end
+    transaction = CrudManagment::CreateService.new(
+      Transaction,
+      transaction_params
+    ).render_json
+
+    render json: transaction[:data], status: transaction[:status_code]
   end
 
   # PUT /transactions/{user_id}

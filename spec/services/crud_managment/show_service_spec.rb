@@ -3,7 +3,7 @@
 require 'rails_helper'
 
 RSpec.describe CrudManagment::ShowService, type: :service do
-  context "call index with correct values" do
+  context "call show with correct values" do
     let!(:transactions) { create_list(:transaction, 10) }
 
     context "should be returned with correct value of model with param" do

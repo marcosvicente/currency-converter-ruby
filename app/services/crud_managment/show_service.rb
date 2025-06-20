@@ -17,7 +17,7 @@ module CrudManagment
 
     def status_code
       super
-      return 200
+      200
     end
 
     private

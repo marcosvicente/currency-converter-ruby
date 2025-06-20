@@ -22,7 +22,7 @@ module CrudManagment
 
     def status_code
       super
-      return 200
+      200
     end
 
     private
@@ -34,7 +34,7 @@ module CrudManagment
 
     def order
       unless @order.nil?
-        @klass = @klass.order(@order)
+        @klass = klass.order(@order)
       end
     end
 
