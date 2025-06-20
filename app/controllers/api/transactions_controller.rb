@@ -1,6 +1,4 @@
 class Api::TransactionsController < ApplicationController
-  before_action :set_transaction, only: [:show, :update, :destroy]
-
   # GET /transactions
   def index
     transactions = CrudManagment::IndexService.new(
@@ -41,26 +39,22 @@ class Api::TransactionsController < ApplicationController
       get_user_id_params
     ).render_json
 
-    if @transaction.update(transaction_params)
-        render json: @transaction, status: :created
-    else
-      render json: { errors: @transaction.errors.full_messages },
-        status: :unprocessable_entity
-    end
+    render json: transaction[:data], status: transaction[:status_code]
   end
 
   # DELETE /transactions/{username}
   def destroy
-    @transaction.destroy
+    transaction = CrudManagment::DestroyService.new(
+      Transaction,
+      get_user_id_params
+    ).render_json
+
+    render json: transaction[:data], status: transaction[:status_code]
   end
 
   private
   def get_user_id_params
     { user_id: params[:user_id] }
-  end
-
-  def set_transaction
-    @transaction = Transaction.find(params[:user_id])
   end
 
   def transaction_params
