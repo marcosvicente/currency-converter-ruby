@@ -33,7 +33,7 @@ class Api::TransactionsController < ApplicationController
 
   # PUT /transactions/{user_id}
   def update
-    transaction = CrudManagment::UpdateService.new(
+    transaction = TransactionManagment::UpdateService.new(
       Transaction,
       transaction_params,
       get_user_id_params
@@ -61,9 +61,7 @@ class Api::TransactionsController < ApplicationController
     params.require(:transaction).permit(
       :from_currency,
       :from_value,
-      :rate,
       :to_currency,
-      :to_value,
       :user_id
     )
   end

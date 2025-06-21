@@ -2,7 +2,7 @@
 
 module CrudManagment
   class UpdateService < CrudManagment::BaseService
-    attr_accessor :klass, :params
+    attr_accessor :klass, :params, :item_params
     def initialize(klass, params, item_params)
       @klass = super(klass)
       @params = params
@@ -25,20 +25,22 @@ module CrudManagment
     end
 
     def update
-      instance_klass = load_object
-      if instance_klass.update(@params)
+      @klass = load_object
+      if @klass.update(set_params)
         @status_code = 201
-        instance_klass
+        @klass
       else
-        instance_klass.errors.full_messages
         @status_code = 422
+        @klass.errors.full_messages
       end
     end
 
-    private
+    def set_params
+      @params
+    end
 
     def load_object
-      @klass = klass.find_by(@item_params)
+      @klass.find_by(@item_params)
     end
   end
 end

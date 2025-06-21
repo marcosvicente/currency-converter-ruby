@@ -3,7 +3,6 @@ require 'rails_helper'
 
 RSpec.describe CrudManagment::DestroyService, type: :service do
   context "call create with correct values" do
-
     context "should be destroy with valid params" do
       let!(:user) { create(:user) }
       let(:transaction) { create(:transaction, user_id: user.id) }

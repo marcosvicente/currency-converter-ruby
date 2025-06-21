@@ -61,27 +61,29 @@ RSpec.describe "Api::Transactions", type: :request do
       attributes_for(:transaction, name: "test")
     end
 
-    context "with valid parameters" do
-      let(:value){ 3.67306 }
+    let(:value){ 3.67306 }
 
-      let(:currency_api_response) do
-        {
-          "meta": {
-            "last_updated_at": "2023-06-23T10:15:59Z"
-          },
-          "data": {
-            "AED": {
-              "code": "EUR",
-              "value": value
-            }
+    let(:currency_api_response) do
+      {
+        "meta": {
+          "last_updated_at": "2023-06-23T10:15:59Z"
+        },
+        "data": {
+          "AED": {
+            "code": "EUR",
+            "value": value
           }
         }
-      end
+      }
+    end
 
+    before(:each) do
+      allow(HTTParty).to receive(:get).and_return(currency_api_response)
+      allow_any_instance_of(TransactionManagment::CreateService).to receive(:get_values_from_currency).and_return(value)
+    end
+
+    context "with valid parameters" do
       it "creates a new transaction" do
-        allow(HTTParty).to receive(:get).and_return(currency_api_response)
-        allow_any_instance_of(TransactionManagment::CreateService).to receive(:get_values_from_currency).and_return(value)
-
         expect {
           post "/api/transactions/",
                params: { transaction: valid_attributes }, as: :json
@@ -89,9 +91,6 @@ RSpec.describe "Api::Transactions", type: :request do
       end
 
       it "renders a JSON response with the new transaction" do
-        allow(HTTParty).to receive(:get).and_return(currency_api_response)
-        allow_any_instance_of(TransactionManagment::CreateService).to receive(:get_values_from_currency).and_return(value)
-
         post "/api/transactions/",
              params: { transaction: valid_attributes }, as: :json
 
@@ -100,9 +99,6 @@ RSpec.describe "Api::Transactions", type: :request do
       end
 
       it "validate correct values" do
-        allow(HTTParty).to receive(:get).and_return(currency_api_response)
-        allow_any_instance_of(TransactionManagment::CreateService).to receive(:get_values_from_currency).and_return(value)
-
         post "/api/transactions/",
           params: { transaction: valid_attributes }, as: :json
 
@@ -116,26 +112,7 @@ RSpec.describe "Api::Transactions", type: :request do
     end
 
     context "with invalid parameters" do
-      let(:value){ 3.67306 }
-
-      let(:currency_api_response) do
-        {
-          "meta": {
-            "last_updated_at": "2023-06-23T10:15:59Z"
-          },
-          "data": {
-            "AED": {
-              "code": "EUR",
-              "value": value
-            }
-          }
-        }
-      end
-
       it "does not create a new transaction" do
-        allow(HTTParty).to receive(:get).and_return(currency_api_response)
-        allow_any_instance_of(TransactionManagment::CreateService).to receive(:get_values_from_currency).and_return(value)
-
         expect {
           post "/api/transactions/",
                params: { transaction: invalid_attributes }, as: :json
@@ -143,9 +120,6 @@ RSpec.describe "Api::Transactions", type: :request do
       end
 
       it "renders a JSON response with errors for the new test" do
-        allow(HTTParty).to receive(:get).and_return(currency_api_response)
-        allow_any_instance_of(TransactionManagment::CreateService).to receive(:get_values_from_currency).and_return(value)
-
         post "/api/transactions/",
              params: { transaction: invalid_attributes }, as: :json
         expect(response).to have_http_status(:unprocessable_entity)
@@ -153,7 +127,6 @@ RSpec.describe "Api::Transactions", type: :request do
       end
     end
   end
-
 
   # PUT /users/:user_id
   context "PUT /update" do
@@ -164,8 +137,30 @@ RSpec.describe "Api::Transactions", type: :request do
     end
 
     let(:invalid_attributes) do
-      attributes_for(:transaction, to_value: nil)
+      attributes_for(:transaction, user_id: 9999999)
     end
+
+    let(:value){ 3.67306 }
+
+    let(:currency_api_response) do
+      {
+        "meta": {
+          "last_updated_at": "2023-06-23T10:15:59Z"
+        },
+        "data": {
+          "AED": {
+            "code": "EUR",
+            "value": value
+          }
+        }
+      }
+    end
+
+    before(:each) do
+      allow(HTTParty).to receive(:get).and_return(currency_api_response)
+      allow_any_instance_of(TransactionManagment::UpdateService).to receive(:get_values_from_currency).and_return(value)
+    end
+
     context "with valid parameters" do
       it "updates the requested" do
         put "/api/transactions/#{transaction.user_id}",
@@ -175,13 +170,13 @@ RSpec.describe "Api::Transactions", type: :request do
 
         expect(response_body["from_currency"]).to eq(valid_attributes[:from_currency])
         expect(response_body["from_value"]).to eq(valid_attributes[:from_value])
-        expect(response_body["rate"]).to eq(valid_attributes[:rate])
+        expect(response_body["rate"]).to eq(value / valid_attributes[:from_value])
         expect(response_body["to_currency"]).to eq(valid_attributes[:to_currency])
-        expect(response_body["to_value"]).to eq(valid_attributes[:to_value])
+        expect(response_body["to_value"]).to eq(value)
         expect(response_body["user_id"]).to eq(valid_attributes[:user_id])
       end
 
-      it "renders a JSON response with the test" do
+      it "renders a JSON response" do
         put "/api/transactions/#{transaction.user_id}",
               params: { transaction: valid_attributes }, as: :json
         expect(response).to have_http_status(:created)
@@ -190,9 +185,10 @@ RSpec.describe "Api::Transactions", type: :request do
     end
 
     context "with invalid parameters" do
-      it "renders a JSON response with errors for the test" do
+      it "renders a JSON response with errors" do
         put "/api/transactions/#{transaction.user_id}",
               params: { transaction: invalid_attributes }, as: :json
+
         expect(response).to have_http_status(:unprocessable_entity)
         expect(response.content_type).to include("application/json")
       end
@@ -202,9 +198,9 @@ RSpec.describe "Api::Transactions", type: :request do
   # DELETE /users/:user_id
   context "DELETE /destroy" do
     let(:transaction){ create(:transaction)}
-    it "destroys the requested test" do
+    it "destroys the requested" do
       expect {
-        delete "/api/transactions/#{transaction.user_id}", as: :json
+        delete "/api/transactions/#{transaction.user_id }", as: :json
       }.to change(Transaction, :count).by(0)
     end
   end
