@@ -10,7 +10,7 @@ RSpec.describe CurrencyApiIntegration::LatestService, type: :service do
     end
 
     let(:url) do
-      "http://api.currencyapi.com/v3/latest?#{route}&apikey=api_key"
+      "https://api.currencyapi.com/v3/#{route}&apikey=api_key"
     end
 
     let(:klass) do
@@ -35,7 +35,7 @@ RSpec.describe CurrencyApiIntegration::LatestService, type: :service do
     it "should be return correct url" do
       allow_any_instance_of(CurrencyApiIntegration::BaseService).to receive(:request_api).with(route).and_return(url)
 
-      expect(klass.get_url).to eq(url)
+      expect(klass.get_url(route)).to eq(url)
     end
 
       it "should be return correct value from currency_api" do

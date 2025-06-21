@@ -1,25 +1,24 @@
 module CurrencyApiIntegration
   class LatestService < CurrencyApiIntegration::BaseService
-    def initialize(baseCurrency, currencies)
-      @baseCurrency = baseCurrency
+    def initialize(base_currency, currencies)
+      @base_currency = base_currency
       @currencies = currencies
     end
 
     def call
-      result = get_url
-      get_values_from_currency(result)
+      get_values_from_currency(get_route)
     end
 
-    def get_url
-      request_api(sprintf("latest?base_currency=%s&currencies=%s", @baseCurrency, @currencies))
+    def get_route
+      request_api(sprintf("latest?base_currency=%s&currencies=%s", @base_currency, @currencies))
     end
 
     def get_values_from_currency(result)
-      if result["data"].nil
+      if result["data"].nil?
         raise result["message"]
       end
 
-      result["data"][@params[:to_currency]]["value"]
+      result["data"][@currencies]["value"]
     end
   end
 end

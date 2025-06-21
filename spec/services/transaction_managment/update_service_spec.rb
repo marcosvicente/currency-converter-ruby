@@ -14,7 +14,9 @@ RSpec.describe TransactionManagment::UpdateService, type: :service do
           user_id:  transaction.user_id
         }
       end
-      let(:klass) { described_class.new(Transaction, transaction_attr, item_params).call }
+
+      let(:klass) { described_class.new(Transaction, transaction_attr, item_params)}
+      let(:klass_call) { klass.call }
       let(:render_json) { described_class.new(Transaction, transaction_attr, item_params).render_json }
 
       let(:value) { 3.67306 }
@@ -33,8 +35,15 @@ RSpec.describe TransactionManagment::UpdateService, type: :service do
         }
       end
 
+      let(:latest_service) {  CurrencyApiIntegration::LatestService }
+      let(:latest_service_params) do
+        [
+           transaction_attr[:from_currency],
+           transaction_attr[:to_currency]
+      ]
+      end
+
       before(:each) do
-        allow(HTTParty).to receive(:get).and_return(currency_api_response)
         allow_any_instance_of(described_class).to receive(:get_values_from_currency_api).and_return(value)
       end
 
@@ -43,18 +52,18 @@ RSpec.describe TransactionManagment::UpdateService, type: :service do
       end
 
       it "should update a new transaction" do
-        klass.reload
+        klass_call.reload
         expect(Transaction.count).to eq(1)
       end
 
       it "should validate correct values" do
-        klass.reload
-        expect(klass.from_currency).to eq(transaction_attr[:from_currency])
-        expect(klass.from_value).to eq(transaction_attr[:from_value])
-        expect(klass.to_value).to eq(value)
-        expect(klass.rate).to eq(value / transaction_attr[:from_value])
-        expect(klass.to_currency).to eq(transaction_attr[:to_currency])
-        expect(klass.user_id).to eq(transaction_attr[:user_id])
+        klass_call.reload
+        expect(klass_call.from_currency).to eq(transaction_attr[:from_currency])
+        expect(klass_call.from_value).to eq(transaction_attr[:from_value])
+        expect(klass_call.to_value).to eq(value)
+        expect(klass_call.rate).to eq(value / transaction_attr[:from_value])
+        expect(klass_call.to_currency).to eq(transaction_attr[:to_currency])
+        expect(klass_call.user_id).to eq(transaction_attr[:user_id])
       end
 
       context "should be returned with invalid params" do
