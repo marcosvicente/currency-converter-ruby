@@ -32,6 +32,7 @@ module CrudManagment
       else
         @status_code = 422
         @klass.errors.full_messages
+        Rails.logger.error "Error Update: #{@klass.errors.full_messages}"
       end
     end
 

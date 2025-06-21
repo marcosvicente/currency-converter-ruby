@@ -11,13 +11,16 @@ RSpec.describe "Api::Transactions", type: :request do
         expect(response).to have_http_status(:success)
         expect(response_body).to be_an_instance_of(Array)
 
+
         transactions.each_with_index do |transaction, index|
+          expect(response_body[index]["transaction_id"]).to eq(transaction.id)
           expect(response_body[index]["from_currency"]).to eq(transaction.from_currency)
           expect(response_body[index]["from_value"]).to eq(transaction.from_value)
           expect(response_body[index]["rate"]).to eq(transaction.rate)
           expect(response_body[index]["to_currency"]).to eq(transaction.to_currency)
           expect(response_body[index]["to_value"]).to eq(transaction.to_value)
           expect(response_body[index]["user_id"].to_i).to eq(transaction.user_id)
+          expect(response_body[index]["timestamps"].to_date).to eq(transaction.created_at.to_date)
         end
       end
 
@@ -40,12 +43,14 @@ RSpec.describe "Api::Transactions", type: :request do
         get "/api/transactions/#{transactions[3].user_id}"
 
         expect(response).to have_http_status(:success)
+        expect(response_body["transaction_id"]).to eq(transactions[3].id)
         expect(response_body["from_currency"]).to eq(transactions[3].from_currency)
         expect(response_body["from_value"]).to eq(transactions[3].from_value)
         expect(response_body["rate"]).to eq(transactions[3].rate)
         expect(response_body["to_currency"]).to eq(transactions[3].to_currency)
         expect(response_body["to_value"]).to eq(transactions[3].to_value)
         expect(response_body["user_id"].to_i).to eq(transactions[3].user_id)
+        expect(response_body["timestamps"].to_date).to eq(transactions[3].created_at.to_date)
       end
     end
   end
@@ -98,16 +103,32 @@ RSpec.describe "Api::Transactions", type: :request do
         expect(response.content_type).to match(a_string_including("application/json"))
       end
 
-      it "validate correct values" do
+      it "validate return correct values" do
         post "/api/transactions/",
           params: { transaction: valid_attributes }, as: :json
 
+        expect(response_body["transaction_id"]).to_not be_nil
         expect(response_body["from_currency"]).to eq(valid_attributes[:from_currency])
         expect(response_body["from_value"]).to eq(valid_attributes[:from_value])
         expect(response_body["rate"]).to eq(value / valid_attributes[:from_value])
         expect(response_body["to_currency"]).to eq(valid_attributes[:to_currency])
         expect(response_body["to_value"]).to eq(value)
         expect(response_body["user_id"]).to eq(valid_attributes[:user_id])
+        expect(response_body["timestamps"]).to_not be_nil
+      end
+
+      it "validate persit return correct values" do
+         post "/api/transactions/",
+          params: { transaction: valid_attributes }, as: :json
+
+        expect(response_body["transaction_id"]).to eq(Transaction.last.id)
+        expect(response_body["from_currency"]).to eq(Transaction.last.from_currency)
+        expect(response_body["from_value"]).to eq(Transaction.last.from_value)
+        expect(response_body["rate"]).to eq(Transaction.last.rate)
+        expect(response_body["to_currency"]).to eq(Transaction.last.to_currency)
+        expect(response_body["to_value"]).to eq(Transaction.last.to_value)
+        expect(response_body["user_id"]).to eq(Transaction.last.user_id)
+        expect(response_body["timestamps"].to_date).to eq(Transaction.last.created_at.to_date)
       end
     end
 
@@ -167,12 +188,28 @@ RSpec.describe "Api::Transactions", type: :request do
               params: { transaction: valid_attributes }, as: :json
 
         expect(response).to have_http_status(:created)
+        expect(response_body["transaction_id"]).to_not be_nil
         expect(response_body["from_currency"]).to eq(valid_attributes[:from_currency])
         expect(response_body["from_value"]).to eq(valid_attributes[:from_value])
         expect(response_body["to_currency"]).to eq(valid_attributes[:to_currency])
         expect(response_body["user_id"]).to eq(valid_attributes[:user_id])
         expect(response_body["to_value"]).to eq(value)
         expect(response_body["rate"]).to eq(value / valid_attributes[:from_value])
+        expect(response_body["timestamps"]).to_not be_nil
+      end
+
+       it "validate persit return correct values" do
+           put "/api/transactions/#{transaction.user_id}",
+              params: { transaction: valid_attributes }, as: :json
+
+        expect(response_body["transaction_id"]).to eq(Transaction.last.id)
+        expect(response_body["from_currency"]).to eq(Transaction.last.from_currency)
+        expect(response_body["from_value"]).to eq(Transaction.last.from_value)
+        expect(response_body["rate"]).to eq(Transaction.last.rate)
+        expect(response_body["to_currency"]).to eq(Transaction.last.to_currency)
+        expect(response_body["to_value"]).to eq(Transaction.last.to_value)
+        expect(response_body["user_id"]).to eq(Transaction.last.user_id)
+        expect(response_body["timestamps"].to_date).to eq(Transaction.last.created_at.to_date)
       end
 
       it "renders a JSON response" do
