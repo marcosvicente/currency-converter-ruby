@@ -131,9 +131,9 @@ RSpec.describe "Api::Transactions", type: :request do
   # PUT /users/:user_id
   context "PUT /update" do
     let(:user) { create(:user) }
-    let(:transaction) { create(:transaction) }
+    let(:transaction) { create(:transaction, from_currency: CurrencyEnumeration::USD) }
     let(:valid_attributes) do
-      attributes_for(:transaction, user_id: user.id)
+      attributes_for(:transaction, user_id: user.id, from_currency: CurrencyEnumeration::BRL)
     end
 
     let(:invalid_attributes) do

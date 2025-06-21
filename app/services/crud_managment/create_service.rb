@@ -31,6 +31,7 @@ module CrudManagment
       else
         instance_klass.errors.full_messages
         @status_code = 422
+        Rails.logger.error "Error Create: #{@klass.errors.full_messages}"
       end
     end
 
