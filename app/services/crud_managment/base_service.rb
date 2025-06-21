@@ -11,7 +11,7 @@ module CrudManagment
     def render_json
       call
       if @klass.nil?
-        { data: "Not have data", status_code: 404}
+        { data: "Not have data", status_code: 404 }
       else
         { data: @klass, status_code: status_code }
       end

@@ -30,15 +30,15 @@ gem "bootsnap", require: false
 # gem "rack-cors"
 
 # Paginate
-gem 'kaminari', '~> 1.2'
+gem "kaminari", "~> 1.2"
 
-gem 'httparty'
+gem "httparty"
 
-gem 'enumerate_it'
+gem "enumerate_it"
 
-gem 'dotenv', groups: [:development, :test]
+gem "dotenv", groups: [ :development, :test ]
 
-gem 'active_model_serializers', '~> 0.10.2'
+gem "active_model_serializers", "~> 0.10.2"
 
 group :development, :test do
   # See https://guides.rubyonrails.org/debugging_rails_applications.html#debugging-with-the-debug-gem
@@ -50,19 +50,19 @@ group :development, :test do
   # Omakase Ruby styling [https://github.com/rails/rubocop-rails-omakase/]
   gem "rubocop-rails-omakase", require: false
 
-  gem 'factory_bot_rails'
-  gem 'faker'
-  gem 'pry-rails', :group => :development
-  gem 'rspec-rails', '~> 8.0.1'
-  gem 'shoulda-matchers', '~> 4.0'
-  gem 'database_cleaner'
-  gem 'timecop'
+  gem "factory_bot_rails"
+  gem "faker"
+  gem "pry-rails", group: :development
+  gem "rspec-rails", "~> 8.0.1"
+  gem "shoulda-matchers", "~> 4.0"
+  gem "database_cleaner"
+  gem "timecop"
 end
 
 group :development do
-  gem 'annotate', git: 'https://github.com/ctran/annotate_models.git'
+  gem "annotate", git: "https://github.com/ctran/annotate_models.git"
 end
 
 group :test do
-  gem 'simplecov', require: false
+  gem "simplecov", require: false
 end

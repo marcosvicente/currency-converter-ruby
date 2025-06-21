@@ -1,13 +1,12 @@
 require 'rails_helper'
 
 RSpec.describe CrudManagment::IndexService, type: :service do
-
   context "call index with correct values" do
     let!(:user) { create(:user) }
     let!(:transactions) { create_list(:transaction, 10, user: user) }
 
     context "should be returned with correct value of model" do
-      let(:order) { "created_at asc"}
+      let(:order) { "created_at asc" }
       let(:paginate_params) do
         {
           page: 1,
@@ -62,7 +61,7 @@ RSpec.describe CrudManagment::IndexService, type: :service do
 
 
     context "should be return with order" do
-      let(:order) { "created_at desc"}
+      let(:order) { "created_at desc" }
       let(:transaction_order_validate) { Transaction.order(created_at: :desc).first.id }
 
       let(:klass) { described_class.new(Transaction, nil, nil, order).call }
@@ -74,7 +73,7 @@ RSpec.describe CrudManagment::IndexService, type: :service do
 
     context "should be return with params" do
       context "with all" do
-        let(:klass) { described_class.new(Transaction, nil, nil, nil).call}
+        let(:klass) { described_class.new(Transaction, nil, nil, nil).call }
         it "should be return all value of klass" do
           expect(klass.count).to eq(Transaction.count)
         end
@@ -97,7 +96,7 @@ RSpec.describe CrudManagment::IndexService, type: :service do
     end
 
     context "should be return no have data" do
-      let(:klass) { described_class.new(Transaction, nil, nil, nil).call}
+      let(:klass) { described_class.new(Transaction, nil, nil, nil).call }
       it "should be return all value of klass" do
         Transaction.destroy_all
         expect(klass.count).to eq(0)

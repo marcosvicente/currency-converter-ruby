@@ -1,4 +1,5 @@
 # frozen_string_literal: true
+
 require 'rails_helper'
 
 RSpec.describe TransactionManagment::UpdateService, type: :service do
@@ -16,7 +17,7 @@ RSpec.describe TransactionManagment::UpdateService, type: :service do
       let(:klass) { described_class.new(Transaction, transaction_attr, item_params).call }
       let(:render_json) { described_class.new(Transaction, transaction_attr, item_params).render_json }
 
-      let(:value){ 3.67306 }
+      let(:value) { 3.67306 }
 
       let(:currency_api_response) do
         {

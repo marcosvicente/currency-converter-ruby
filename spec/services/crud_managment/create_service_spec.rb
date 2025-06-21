@@ -4,7 +4,6 @@ require 'rails_helper'
 
 RSpec.describe CrudManagment::CreateService, type: :service do
   context "call create with correct values" do
-
     context "should be returned with valid params" do
     let!(:user) { create(:user) }
     let(:transaction_attr) { attributes_for(:transaction, user_id: user.id) }

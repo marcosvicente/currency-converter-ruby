@@ -4,14 +4,13 @@ require 'rails_helper'
 
 RSpec.describe TransactionManagment::CreateService, type: :service do
   context "call create with correct values" do
-
     context "should be returned with valid params" do
       let!(:user) { create(:user) }
       let(:transaction_attr) { attributes_for(:transaction, user_id: user.id) }
       let(:klass) { described_class.new(Transaction, transaction_attr).call }
       let(:render_json) { described_class.new(Transaction, transaction_attr).render_json }
 
-      let(:value){ 3.67306 }
+      let(:value) { 3.67306 }
 
       let(:currency_api_response) do
         {

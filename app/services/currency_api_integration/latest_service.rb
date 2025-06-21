@@ -11,7 +11,7 @@ module CurrencyApiIntegration
     end
 
     def get_url
-      request_api(sprintf('latest?base_currency=%s&currencies=%s', @baseCurrency, @currencies))
+      request_api(sprintf("latest?base_currency=%s&currencies=%s", @baseCurrency, @currencies))
     end
 
     def get_values_from_currency(result)

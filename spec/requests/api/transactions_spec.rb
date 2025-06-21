@@ -3,7 +3,7 @@ require 'rails_helper'
 RSpec.describe "Api::Transactions", type: :request do
   # GET /users
   describe "GET /index" do
-  let!(:transactions) { create_list(:transaction, 10)}
+  let!(:transactions) { create_list(:transaction, 10) }
     context "success" do
       it "should be return all transactions" do
         get "/api/transactions/"
@@ -38,7 +38,7 @@ RSpec.describe "Api::Transactions", type: :request do
   # GET /users/:user_id
   describe "GET /show" do
     context "success" do
-      let!(:transactions) { create_list(:transaction, 10)}
+      let!(:transactions) { create_list(:transaction, 10) }
       it "should be return transactions with user_id" do
         get "/api/transactions/#{transactions[3].user_id}"
 
@@ -66,7 +66,7 @@ RSpec.describe "Api::Transactions", type: :request do
       attributes_for(:transaction, name: "test")
     end
 
-    let(:value){ 3.67306 }
+    let(:value) { 3.67306 }
 
     let(:currency_api_response) do
       {
@@ -161,7 +161,7 @@ RSpec.describe "Api::Transactions", type: :request do
       attributes_for(:transaction, user_id: 9999999)
     end
 
-    let(:value){ 3.67306 }
+    let(:value) { 3.67306 }
 
     let(:currency_api_response) do
       {
@@ -233,7 +233,7 @@ RSpec.describe "Api::Transactions", type: :request do
 
   # DELETE /users/:user_id
   context "DELETE /destroy" do
-    let(:transaction){ create(:transaction)}
+    let(:transaction) { create(:transaction) }
     it "destroys the requested" do
       expect {
         delete "/api/transactions/#{transaction.user_id }", as: :json

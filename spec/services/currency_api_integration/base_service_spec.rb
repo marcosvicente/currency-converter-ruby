@@ -3,12 +3,11 @@
 require 'rails_helper'
 
 RSpec.describe CurrencyApiIntegration::BaseService, type: :service do
-
   context "Validate correct url" do
     let!(:transaction_attr) { attributes_for(:transaction, from_currency: 'USD', to_currency: 'EUR') }
 
     let(:route) do
-      sprintf('latest?base_currency=%s&currencies=%s',transaction_attr[:from_currency], transaction_attr[:to_currency])
+      sprintf('latest?base_currency=%s&currencies=%s', transaction_attr[:from_currency], transaction_attr[:to_currency])
     end
 
     let(:url) do
