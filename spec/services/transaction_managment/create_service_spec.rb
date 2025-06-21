@@ -29,7 +29,7 @@ RSpec.describe TransactionManagment::CreateService, type: :service do
 
       before(:each) do
         allow(HTTParty).to receive(:get).and_return(currency_api_response)
-        allow_any_instance_of(described_class).to receive(:get_values_from_currency).and_return(value)
+        allow_any_instance_of(described_class).to receive(:get_values_from_currency_api).and_return(value)
       end
 
       it "should be return correct status" do

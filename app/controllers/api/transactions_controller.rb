@@ -1,5 +1,5 @@
 class Api::TransactionsController < ApplicationController
-  # GET /transactions
+  # GET /api/transactions
   def index
     transactions = CrudManagment::IndexService.new(
       Transaction,
@@ -11,7 +11,7 @@ class Api::TransactionsController < ApplicationController
     render json: transactions[:data], status: transactions[:status_code]
   end
 
-  # GET /transactions/{user_id}
+  # GET /api/transactions/{user_id}
   def show
     transaction = CrudManagment::ShowService.new(
       Transaction,
@@ -21,7 +21,7 @@ class Api::TransactionsController < ApplicationController
     render json: transaction[:data], status: transaction[:status_code]
   end
 
-  # POST /transactions
+  # POST /api/transactions
   def create
     transaction = TransactionManagment::CreateService.new(
       Transaction,
@@ -31,7 +31,7 @@ class Api::TransactionsController < ApplicationController
     render json: transaction[:data], status: transaction[:status_code]
   end
 
-  # PUT /transactions/{user_id}
+  # PUT /api/transactions/{user_id}
   def update
     transaction = TransactionManagment::UpdateService.new(
       Transaction,
@@ -42,7 +42,7 @@ class Api::TransactionsController < ApplicationController
     render json: transaction[:data], status: transaction[:status_code]
   end
 
-  # DELETE /transactions/{username}
+  # DELETE /api/transactions/{username}
   def destroy
     transaction = CrudManagment::DestroyService.new(
       Transaction,

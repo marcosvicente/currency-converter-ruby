@@ -25,9 +25,12 @@ module CrudManagment
 
     def delete
       instance_klass = load_object
-      if instance_klass.destroy
+      unless instance_klass.nil?
+        instance_klass.destroy
         @status_code = 201
         instance_klass
+      else
+        @status_code = 422
       end
     end
 

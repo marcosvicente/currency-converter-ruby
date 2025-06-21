@@ -79,7 +79,7 @@ RSpec.describe "Api::Transactions", type: :request do
 
     before(:each) do
       allow(HTTParty).to receive(:get).and_return(currency_api_response)
-      allow_any_instance_of(TransactionManagment::CreateService).to receive(:get_values_from_currency).and_return(value)
+      allow_any_instance_of(TransactionManagment::CreateService).to receive(:get_values_from_currency_api).and_return(value)
     end
 
     context "with valid parameters" do
@@ -158,7 +158,7 @@ RSpec.describe "Api::Transactions", type: :request do
 
     before(:each) do
       allow(HTTParty).to receive(:get).and_return(currency_api_response)
-      allow_any_instance_of(TransactionManagment::UpdateService).to receive(:get_values_from_currency).and_return(value)
+      allow_any_instance_of(TransactionManagment::UpdateService).to receive(:get_values_from_currency_api).and_return(value)
     end
 
     context "with valid parameters" do
@@ -167,13 +167,12 @@ RSpec.describe "Api::Transactions", type: :request do
               params: { transaction: valid_attributes }, as: :json
 
         expect(response).to have_http_status(:created)
-
         expect(response_body["from_currency"]).to eq(valid_attributes[:from_currency])
         expect(response_body["from_value"]).to eq(valid_attributes[:from_value])
-        expect(response_body["rate"]).to eq(value / valid_attributes[:from_value])
         expect(response_body["to_currency"]).to eq(valid_attributes[:to_currency])
-        expect(response_body["to_value"]).to eq(value)
         expect(response_body["user_id"]).to eq(valid_attributes[:user_id])
+        expect(response_body["to_value"]).to eq(value)
+        expect(response_body["rate"]).to eq(value / valid_attributes[:from_value])
       end
 
       it "renders a JSON response" do

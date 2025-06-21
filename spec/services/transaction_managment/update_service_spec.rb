@@ -5,8 +5,8 @@ RSpec.describe TransactionManagment::UpdateService, type: :service do
   context "call create with correct values" do
     context "should be returned with valid params" do
       let!(:user) { create(:user) }
-      let(:transaction) { create(:transaction, user_id: user.id, from_currency: 'RON') }
-      let(:transaction_attr) { attributes_for(:transaction, user_id: user.id, from_currency: 'EUR') }
+      let(:transaction) { create(:transaction, user_id: user.id, from_currency: CurrencyEnumeration::JYP) }
+      let(:transaction_attr) { attributes_for(:transaction, user_id: user.id, from_currency: CurrencyEnumeration::EUR) }
 
       let(:item_params) do
         {
@@ -34,7 +34,7 @@ RSpec.describe TransactionManagment::UpdateService, type: :service do
 
       before(:each) do
         allow(HTTParty).to receive(:get).and_return(currency_api_response)
-        allow_any_instance_of(described_class).to receive(:get_values_from_currency).and_return(value)
+        allow_any_instance_of(described_class).to receive(:get_values_from_currency_api).and_return(value)
       end
 
       it "should be return correct status" do

@@ -24,8 +24,11 @@ class Transaction < ApplicationRecord
   belongs_to :user
 
   validates :from_currency, presence: true
-  validates :from_value, presence: true
-  validates :rate, presence: true
   validates :to_currency, presence: true
+  validates :from_value, presence: true
   validates :to_value, presence: true
+  validates :rate, presence: true
+
+  has_enumeration_for :from_currency, with: CurrencyEnumeration
+  has_enumeration_for :to_currency, with: CurrencyEnumeration
 end

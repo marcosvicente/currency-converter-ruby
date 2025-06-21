@@ -33,15 +33,8 @@ RSpec.describe CurrencyApiIntegration::BaseService, type: :service do
       }
     end
     it "should be return correct url" do
-      allow(HTTParty).to receive(:get).and_return(response)
       allow_any_instance_of(described_class).to receive(:request_api).with(route).and_return(url)
-
-      expect(klass).to eq(url)
-    end
-
-    it "should be return error url" do
-      allow(HTTParty).to receive(:get).and_return(response)
-      allow_any_instance_of(described_class).to receive(:request_api).with(route).and_return(url)
+      allow(HTTParty).to receive(:get).with(:url).and_return(response)
 
       expect(klass).to eq(url)
     end

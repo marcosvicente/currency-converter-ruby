@@ -23,8 +23,8 @@
 FactoryBot.define do
   factory :transaction do
     user { create(:user) }
-    from_currency { Faker::Currency.code  }
-    to_currency { Faker::Currency.code  }
+    from_currency { CurrencyEnumeration::USD  }
+    to_currency { CurrencyEnumeration::BRL  }
     from_value { Faker::Number.number(digits: 2) }
     to_value { Faker::Number.decimal(l_digits: 2)  }
     rate { Faker::Number.decimal(l_digits: 2) }

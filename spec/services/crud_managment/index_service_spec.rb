@@ -95,5 +95,13 @@ RSpec.describe CrudManagment::IndexService, type: :service do
         end
       end
     end
+
+    context "should be return no have data" do
+      let(:klass) { described_class.new(Transaction, nil, nil, nil).call}
+      it "should be return all value of klass" do
+        Transaction.destroy_all
+        expect(klass.count).to eq(0)
+      end
+    end
   end
 end

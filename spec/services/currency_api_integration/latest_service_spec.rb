@@ -14,15 +14,14 @@ RSpec.describe CurrencyApiIntegration::LatestService, type: :service do
     end
 
     let(:klass) do
-      described_class.new(transaction_attr[:from_currency], transaction_attr[:to_currency]).call
+      described_class.new(transaction_attr[:from_currency], transaction_attr[:to_currency])
     end
 
 
     it "should be return correct url" do
       allow_any_instance_of(CurrencyApiIntegration::BaseService).to receive(:request_api).with(route).and_return(url)
-        # allow(described_class).to receive(:request_api).with(route).and_return(url)
 
-        expect(klass).to eq(url)
+      expect(klass.get_url).to eq(url)
     end
   end
 end

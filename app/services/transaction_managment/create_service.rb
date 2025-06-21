@@ -5,7 +5,7 @@ module TransactionManagment
     end
 
     def load_object
-      currency_api_value = get_values_from_currency
+      currency_api_value = get_values_from_currency_api
       @klass = @klass.new(
         user_id: params[:user_id],
         from_currency: params[:from_currency],
@@ -21,12 +21,6 @@ module TransactionManagment
         @params[:from_currency],
         @params[:to_currency]
       ).call
-    end
-
-    def get_values_from_currency
-      currency_api = get_values_from_currency_api
-
-      currency_api["data"][@params[:to_currency]]["value"]
     end
   end
 end

@@ -34,6 +34,8 @@ gem 'kaminari', '~> 1.2'
 
 gem 'httparty'
 
+gem 'enumerate_it'
+
 gem 'dotenv', groups: [:development, :test]
 group :development, :test do
   # See https://guides.rubyonrails.org/debugging_rails_applications.html#debugging-with-the-debug-gem
