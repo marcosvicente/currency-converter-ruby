@@ -3,8 +3,9 @@ module CurrencyApiIntegration
     def request_api(route)
       begin
         @response = HTTParty.get(get_url(route))
-      rescue HTTParty::ResponseError => e
-        raise e.response
+      rescue HTTParty::Error => e
+        Rails.logger.error "Error request: #{e}"
+        raise e
       end
     end
 

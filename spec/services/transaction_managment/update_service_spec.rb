@@ -6,7 +6,7 @@ RSpec.describe TransactionManagment::UpdateService, type: :service do
   context "call create with correct values" do
     context "should be returned with valid params" do
       let!(:user) { create(:user) }
-      let(:transaction) { create(:transaction, user_id: user.id, from_currency: CurrencyEnumeration::JYP) }
+      let(:transaction) { create(:transaction, user_id: user.id, from_currency: CurrencyEnumeration::BRL) }
       let(:transaction_attr) { attributes_for(:transaction, user_id: user.id, from_currency: CurrencyEnumeration::EUR) }
 
       let(:item_params) do
@@ -49,6 +49,13 @@ RSpec.describe TransactionManagment::UpdateService, type: :service do
 
       it "should be return correct status" do
         expect(render_json[:status_code]).to eq(201)
+      end
+
+      it "should be receive CurrencyApiIntegration::LatestService" do
+        allow(CurrencyApiIntegration::LatestService).to receive(:call).and_return(currency_api_response.deep_stringify_keys)
+
+        klass.get_values_from_currency_api
+        expect(CurrencyApiIntegration::LatestService).to have_received(:call).once
       end
 
       it "should update a new transaction" do

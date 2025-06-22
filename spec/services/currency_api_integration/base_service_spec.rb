@@ -7,7 +7,7 @@ RSpec.describe CurrencyApiIntegration::BaseService, type: :service do
     let!(:transaction_attr) { attributes_for(:transaction, from_currency: 'USD', to_currency: 'EUR') }
 
     let(:route) do
-      sprintf('base_currency=%s&currencies=%s', transaction_attr[:from_currency], transaction_attr[:to_currency])
+      sprintf('latest?base_currency=%s&currencies=%s', transaction_attr[:from_currency], transaction_attr[:to_currency])
     end
 
     let(:url) do
@@ -18,7 +18,7 @@ RSpec.describe CurrencyApiIntegration::BaseService, type: :service do
       described_class.new
     end
 
-    let(:response) do
+    let(:currency_api_response) do
       {
         "meta": {
           "last_updated_at": "2023-06-23T10:15:59Z"
@@ -32,20 +32,20 @@ RSpec.describe CurrencyApiIntegration::BaseService, type: :service do
       }
     end
 
-   
+    let(:currency_api_response_error) do
+      {
+        "message": "Error"
+      }
+    end
 
     context "fetch correct values" do
       before do
-        allow(HTTParty).to receive(:get).and_return(response)
-        allow_any_instance_of(described_class).to receive(:request_api).with(route).and_return(response)
+        allow(HTTParty).to receive(:get).and_return(currency_api_response.deep_stringify_keys)
       end
 
-      it 'fetches HTTParty current_api api' do
-
-      stub_request(:get, url).
-        to_return(status: 200, body: response.to_json, headers: {})
-
-        expect(klass.request_api(route)).to eq(response)
+      it 'fetches HTTParty current_api' do
+        klass.request_api(route)
+        expect(HTTParty).to have_received(:get).once
       end
 
       it "should be return correct url" do
@@ -55,13 +55,11 @@ RSpec.describe CurrencyApiIntegration::BaseService, type: :service do
 
     context "fetch incorrect values" do
       before do
-        allow_any_instance_of(described_class).to receive(:request_api).with(route).and_raise
+        allow(HTTParty).to receive(:get).and_raise(HTTParty::Error)
       end
 
       it 'fetches error with HTTParty::Error' do
-        stub_request(:get, url)
-          .to_return(status: 200, body: response.to_json, headers: {})
-          .to_raise(HTTParty::ResponseError)
+        expect { klass.request_api(route) }.to raise_error(HTTParty::Error)
       end
     end
   end

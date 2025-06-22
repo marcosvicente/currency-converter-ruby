@@ -15,9 +15,8 @@ module CurrencyApiIntegration
 
     def get_values_from_currency(result)
       if result["data"].nil?
-        raise result["message"]
+        return result["message"]
       end
-
       result["data"][@currencies]["value"]
     end
   end

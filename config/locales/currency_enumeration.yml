@@ -1,7 +1,7 @@
 en:
   enumerations:
     currency_enumeration:
-      brl: 'BRL'
-      usd: 'USD'
-      eur: 'EUR'
-      jpy: 'JPY'  
+      BRL: 'BRL'
+      USD: 'USD'
+      EUR: 'EUR'
+      JPY: 'JPY'  

@@ -19,18 +19,37 @@ RSpec.describe CurrencyApiIntegration::LatestService, type: :service do
 
     let(:value) { 52.000 }
     let(:currency_api_response) do
-        {
-          "meta": {
-            "last_updated_at": "2023-06-23T10:15:59Z"
-          },
-          "data": {
-            "EUR": {
-              "code": "EUR",
-              "value": value
-            }
+      {
+        "meta": {
+          "last_updated_at": "2023-06-23T10:15:59Z"
+        },
+        "data": {
+          "EUR": {
+            "code": "EUR",
+            "value": value
           }
         }
-      end
+      }
+    end
+
+     let(:currency_api_response_error) do
+      {
+        "message": "Error"
+      }
+    end
+
+    it "should be return value of currency" do
+      allow_any_instance_of(CurrencyApiIntegration::BaseService).to receive(:request_api).with(route).and_return(currency_api_response.deep_stringify_keys)
+
+      allow(HTTParty).to receive(:get).and_return(currency_api_response.deep_stringify_keys)
+      expect(klass.call).to eq(value)
+    end
+
+    it "should be return raise" do
+      allow_any_instance_of(CurrencyApiIntegration::BaseService).to receive(:request_api).with(route).and_return(currency_api_response_error.deep_stringify_keys)
+
+      expect(klass.call).to eq(currency_api_response_error.deep_stringify_keys["message"])
+    end
 
     it "should be return correct url" do
       allow_any_instance_of(CurrencyApiIntegration::BaseService).to receive(:request_api).with(route).and_return(url)
