@@ -7,7 +7,7 @@ RSpec.describe TransactionManagment::CreateService, type: :service do
     context "should be returned with valid params" do
       let!(:user) { create(:user) }
       let(:transaction_attr) { attributes_for(:transaction, user_id: user.id) }
-      let(:klass) { described_class.new(Transaction, transaction_attr)}
+      let(:klass) { described_class.new(Transaction, transaction_attr) }
       let(:klass_call) { klass.call }
       let(:render_json) { described_class.new(Transaction, transaction_attr).render_json }
 
@@ -20,7 +20,7 @@ RSpec.describe TransactionManagment::CreateService, type: :service do
           transaction_attr[:from_currency],
           transaction_attr[:to_currency]
         ).and_return(latest_service)
-        allow(latest_service).to receive(:call).and_return(value)     
+        allow(latest_service).to receive(:call).and_return(value)
       end
 
       it "should be return correct status" do

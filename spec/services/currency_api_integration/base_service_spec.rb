@@ -32,7 +32,7 @@ RSpec.describe CurrencyApiIntegration::BaseService, type: :service do
       }
     end
 
-    let(:currency_api_response_error) { {"message": "Error"} }
+    let(:currency_api_response_error) { { "message": "Error" } }
 
     context "fetch correct values" do
       before do

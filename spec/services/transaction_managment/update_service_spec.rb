@@ -15,7 +15,7 @@ RSpec.describe TransactionManagment::UpdateService, type: :service do
         }
       end
 
-      let(:klass) { described_class.new(Transaction, transaction_attr, item_params)}
+      let(:klass) { described_class.new(Transaction, transaction_attr, item_params) }
       let(:klass_call) { klass.call }
       let(:render_json) { described_class.new(Transaction, transaction_attr, item_params).render_json }
 
