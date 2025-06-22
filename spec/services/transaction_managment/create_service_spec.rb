@@ -7,29 +7,20 @@ RSpec.describe TransactionManagment::CreateService, type: :service do
     context "should be returned with valid params" do
       let!(:user) { create(:user) }
       let(:transaction_attr) { attributes_for(:transaction, user_id: user.id) }
-      let(:klass) { described_class.new(Transaction, transaction_attr).call }
+      let(:klass) { described_class.new(Transaction, transaction_attr)}
+      let(:klass_call) { klass.call }
       let(:render_json) { described_class.new(Transaction, transaction_attr).render_json }
 
       let(:value) { 3.67306 }
 
-      let(:currency_api_response) do
-        {
-          "meta": {
-            "last_updated_at": "2023-06-23T10:15:59Z"
-          },
-          "data": {
-            "EUR": {
-              "code": "EUR",
-              "value": value
-            }
-          }
-        }
-      end
+      let(:latest_service) { instance_double(CurrencyApiIntegration::LatestService) }
 
       before(:each) do
-        allow(HTTParty).to receive(:get).and_return(currency_api_response)
-
-        allow_any_instance_of(described_class).to receive(:get_values_from_currency_api).and_return(value)
+        allow(CurrencyApiIntegration::LatestService).to receive(:new).with(
+          transaction_attr[:from_currency],
+          transaction_attr[:to_currency]
+        ).and_return(latest_service)
+        allow(latest_service).to receive(:call).and_return(value)     
       end
 
       it "should be return correct status" do
@@ -37,25 +28,34 @@ RSpec.describe TransactionManagment::CreateService, type: :service do
       end
 
       it "should create a new transaction" do
-        klass.reload
+        klass_call.reload
         expect(Transaction.count).to eq(1)
       end
 
+      it "should be receive CurrencyApiIntegration::LatestService" do
+        klass.get_values_from_currency_api
+        expect(latest_service).to have_received(:call)
+      end
+
+      it "should be return value of get_values_from_currency_api" do
+        expect(klass.get_values_from_currency_api).to eq(value)
+      end
+
       it "should validate correct values" do
-        klass.reload
-        expect(klass.from_currency).to eq(transaction_attr[:from_currency])
-        expect(klass.from_value).to eq(transaction_attr[:from_value])
-        expect(klass.rate).to eq(value / transaction_attr[:from_value])
-        expect(klass.to_currency).to eq(transaction_attr[:to_currency])
-        expect(klass.to_value).to eq(value)
-        expect(klass.user_id).to eq(transaction_attr[:user_id])
+        klass_call.reload
+        expect(klass_call.from_currency).to eq(transaction_attr[:from_currency])
+        expect(klass_call.from_value).to eq(transaction_attr[:from_value])
+        expect(klass_call.rate).to eq(value / transaction_attr[:from_value])
+        expect(klass_call.to_currency).to eq(transaction_attr[:to_currency])
+        expect(klass_call.to_value).to eq(value)
+        expect(klass_call.user_id).to eq(transaction_attr[:user_id])
       end
 
       context "should be returned with invalid params" do
         let!(:transaction_attr) { attributes_for(:transaction, to_currency: nil) }
         let(:render_json) { described_class.new(Transaction, transaction_attr).render_json }
 
-        let(:klass) { described_class.new(Transaction, transaction_attr).call }
+        let(:klass_call) { described_class.new(Transaction, transaction_attr).call }
 
         it "should not create a new transaction" do
           expect(Transaction.count).to eq(0)
@@ -66,7 +66,7 @@ RSpec.describe TransactionManagment::CreateService, type: :service do
         end
 
         it "should return errors" do
-          expect(klass.errors.full_messages).to include("To currency can't be blank")
+          expect(klass_call.errors.full_messages).to include("To currency can't be blank")
         end
       end
     end

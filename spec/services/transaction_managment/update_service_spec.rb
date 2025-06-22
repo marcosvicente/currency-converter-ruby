@@ -21,30 +21,13 @@ RSpec.describe TransactionManagment::UpdateService, type: :service do
 
       let(:value) { 3.67306 }
 
-      let(:currency_api_response) do
-        {
-          "meta": {
-            "last_updated_at": "2023-06-23T10:15:59Z"
-          },
-          "data": {
-            "AED": {
-              "code": "EUR",
-              "value": value
-            }
-          }
-        }
-      end
-
-      let(:latest_service) {  CurrencyApiIntegration::LatestService }
-      let(:latest_service_params) do
-        [
-           transaction_attr[:from_currency],
-           transaction_attr[:to_currency]
-      ]
-      end
-
+      let(:latest_service) { instance_double(CurrencyApiIntegration::LatestService) }
       before(:each) do
-        allow_any_instance_of(described_class).to receive(:get_values_from_currency_api).and_return(value)
+        allow(CurrencyApiIntegration::LatestService).to receive(:new).with(
+          transaction_attr[:from_currency],
+          transaction_attr[:to_currency]
+        ).and_return(latest_service)
+        allow(latest_service).to receive(:call).and_return(value)
       end
 
       it "should be return correct status" do
@@ -52,10 +35,12 @@ RSpec.describe TransactionManagment::UpdateService, type: :service do
       end
 
       it "should be receive CurrencyApiIntegration::LatestService" do
-        allow(CurrencyApiIntegration::LatestService).to receive(:call).and_return(currency_api_response.deep_stringify_keys)
-
         klass.get_values_from_currency_api
-        expect(CurrencyApiIntegration::LatestService).to have_received(:call).once
+        expect(latest_service).to have_received(:call)
+      end
+
+      it "should be return value of get_values_from_currency_api" do
+        expect(klass.get_values_from_currency_api).to eq(value)
       end
 
       it "should update a new transaction" do
