@@ -37,3 +37,47 @@ jobs:
       - name: Lint code for consistent style
         run: bin/rubocop -f github
 
+
+
+name: CI
+on:
+
+  push:
+    branches: [ master ]
+  pull_request:
+    branches: [ master ]
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - name: Setup Ruby
+        uses: ruby/setup-ruby@v1.80.0
+        with:
+          ruby-version: 2.6.6
+
+      - uses: Borales/actions-yarn@v2.3.0
+        with:
+          cmd: install
+
+      - name: Install Dependencies
+        run: |
+          gem install bundler
+
+      - name: Install Gems
+        run: |
+          bundle install
+
+        run: |
+          bundle exec rails db:setup
+
+      - name: Build and test with rspec
+        run: |
+          bundle exec rspec spec
+
+      - name: Create Coverage Artifact
+        uses: actions/upload-artifact@v2
+        with:
+          name: code-coverage
+          path: coverage/
