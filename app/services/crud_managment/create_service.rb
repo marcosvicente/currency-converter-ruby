@@ -27,11 +27,12 @@ module CrudManagment
       instance_klass = load_object
       if instance_klass.save
         @status_code = 201
+        Rails.logger.info "Create endpoint to #{klass.to_s} accessed"
         instance_klass
       else
-        instance_klass.errors.full_messages
-        @status_code = 422
         Rails.logger.error "Error Create: #{@klass.errors.full_messages}"
+        @status_code = 422
+        instance_klass.errors.full_messages
       end
     end
 

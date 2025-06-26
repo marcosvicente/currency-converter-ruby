@@ -15,6 +15,7 @@ module CrudManagment
     end
 
     def render_json
+      Rails.logger.info "Destroy endpoint to #{@klass.to_s} accessed"
       super
     end
 

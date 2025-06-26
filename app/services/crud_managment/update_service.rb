@@ -27,12 +27,13 @@ module CrudManagment
     def update
       @klass = load_object
       if @klass.update(set_params)
+        Rails.logger.info "Update endpoint to #{@klass.to_s} accessed"
         @status_code = 201
         @klass
       else
+        Rails.logger.error "Error Update: #{@klass.errors.full_messages}"
         @status_code = 422
         @klass.errors.full_messages
-        Rails.logger.error "Error Update: #{@klass.errors.full_messages}"
       end
     end
 

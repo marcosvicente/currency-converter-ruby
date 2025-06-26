@@ -12,6 +12,7 @@ module CrudManagment
     end
 
     def render_json
+      Rails.logger.info "Show endpoint to #{klass.to_s} accessed"
       super
     end
 
